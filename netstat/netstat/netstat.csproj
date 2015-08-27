@@ -42,6 +42,9 @@
     <Reference Include="LeagueSharp.Common">
       <HintPath>C:\Users\infy\Desktop\HaxSharp\LeagueSharp-5.16-Broly7\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
+    <Reference Include="LeagueSharp.SDK">
+      <HintPath>C:\Users\infy\Desktop\HaxSharp\LeagueSharp-5.16-Broly7\LeagueSharp\System\LeagueSharp.SDK.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>C:\Users\infy\Desktop\HaxSharp\LeagueSharp-5.16-Broly7\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>

@@ -4,7 +4,7 @@ using LeagueSharp.Common;
 using SharpDX;
 using SPrediction;
 
-namespace NeedASpear {
+namespace NeedASpear_ {
     class NeedASpear {
 
         private static Menu Menu;
@@ -12,7 +12,7 @@ namespace NeedASpear {
         private static readonly Obj_AI_Hero Self          = ObjectManager.Player;
         private static readonly string[] HitchanceDisplay = { "Low", "Medium", "High", "Very high", "Dashing", "Immobile" };
         private static readonly HitChance[] Hitchance     = { HitChance.Low, HitChance.Medium, HitChance.High, HitChance.VeryHigh, HitChance.Dashing, HitChance.Immobile };
-        private Obj_AI_Hero target;
+        //private Obj_AI_Hero target = ObjectManager.Player;
 
         public NeedASpear() {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -50,7 +50,7 @@ namespace NeedASpear {
             if (!Menu.Item("active").GetValue<bool>()) return;
 
             // Target selector, select our target based on collision if set by the user.
-            target = Menu.Item("checkCollision").GetValue<Bool>() ? TargetSelector.GetTargetNoCollision(Javelin) : TargetSelector.GetTarget(Javelin.Range, TargetSelector.DamageType.Magical);
+            var target = Menu.Item("checkCollision").GetValue<Bool>() ? TargetSelector.GetTargetNoCollision(Javelin) : TargetSelector.GetTarget(Javelin.Range, TargetSelector.DamageType.Magical);
             if (!target.IsValidTarget(Javelin.Range) || !Javelin.IsReady()) return;
 
             // Find out what kind of prediction we're using
@@ -63,23 +63,23 @@ namespace NeedASpear {
             switch (mode) {
                 default:
                 case 0: // SPrediction
-                    _SPrediction();
+                    _SPrediction(target);
                     break;
                 case 1: // Kurisu
-                    Kurisu();
+                    Kurisu(target);
                     break;
                 case 2: // Kurisu Old
-                    Kurisu_Old();
+                    Kurisu_Old(target);
                     break;
                 case 3: // Drito
-                    Drito();
+                    Drito(target);
                     break;
             }
         }
 
         public int getIndex() { return Menu.Item("hitchance").GetValue<StringList>().SelectedIndex; }
 
-        public void _SPrediction() {
+        public void _SPrediction(Obj_AI_Hero target) {
             if (Self.Distance(target.ServerPosition) <= Javelin.Range) {
                 // Get user set HitChance
                 HitChance hc = Hitchance[getIndex()];
@@ -89,12 +89,12 @@ namespace NeedASpear {
             }
         }
 
-        public void Kurisu() {
+        public void Kurisu(Obj_AI_Hero target) {
             if(target.Distance(Self.ServerPosition, true) <= Javelin.RangeSqr)
                 Javelin.CastIfHitchanceEquals(target, Hitchance[getIndex()]);
         }
 
-        public void Kurisu_Old() {
+        public void Kurisu_Old(Obj_AI_Hero target) {
             var prediction = Javelin.GetPrediction(target);
             if (target.Distance(Self.ServerPosition, true) <= Javelin.RangeSqr) {
                 if (prediction.Hitchance >= Hitchance[getIndex()]) {
@@ -103,7 +103,7 @@ namespace NeedASpear {
             }
         }
 
-        public void Drito() {
+        public void Drito(Obj_AI_Hero target) {
             if(Self.Distance(target.ServerPosition) <= Javelin.Range) {
                 var JavelinPrediction = Javelin.GetPrediction(target);
                 var HitThere = JavelinPrediction.CastPosition.Extend(Self.Position, -140); /// ???

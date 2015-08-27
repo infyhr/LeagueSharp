@@ -2,7 +2,7 @@
 using LeagueSharp;
 using LeagueSharp.Common;
 
-namespace NeedASpear {
+namespace NeedASpear_ {
     class Program {
         public static NeedASpear NeedASpear;
 

@@ -11,7 +11,7 @@ namespace NeedASpear_ {
         }
 
         private static void Game_OnGameLoad(EventArgs args) {
-            new NeedASpear();
+            NeedASpear = new NeedASpear();
         }
     }
 }

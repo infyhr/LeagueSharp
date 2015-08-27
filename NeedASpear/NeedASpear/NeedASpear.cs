@@ -5,14 +5,13 @@ using SharpDX;
 using SPrediction;
 
 namespace NeedASpear_ {
-    class NeedASpear {
+    internal class NeedASpear {
 
         private static Menu Menu;
-        private static readonly Spell    Javelin          = new Spell(SpellSlot.Q, 1500f);
-        private static readonly Obj_AI_Hero Self          = ObjectManager.Player;
-        private static readonly string[] HitchanceDisplay = { "Low", "Medium", "High", "Very high", "Dashing", "Immobile" };
-        private static readonly HitChance[] Hitchance     = { HitChance.Low, HitChance.Medium, HitChance.High, HitChance.VeryHigh, HitChance.Dashing, HitChance.Immobile };
-        //private Obj_AI_Hero target = ObjectManager.Player;
+        private static Spell    Javelin          = new Spell(SpellSlot.Q, 1500f);
+        private static Obj_AI_Hero Self          = ObjectManager.Player;
+        private static string[] HitchanceDisplay = { "Low", "Medium", "High", "Very high", "Dashing", "Immobile" };
+        private static HitChance[] Hitchance     = { HitChance.Low, HitChance.Medium, HitChance.High, HitChance.VeryHigh, HitChance.Dashing, HitChance.Immobile };
 
         public NeedASpear() {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -29,14 +28,16 @@ namespace NeedASpear_ {
 
             // Set up the main menu
             Menu = new Menu("NeedASpear", "nidalee", true);
-            Menu.AddItem(new MenuItem("active", "Active").SetValue(new KeyBind("L".ToCharArray()[0], KeyBindType.Toggle)));
-            Menu.AddItem(new MenuItem("useharass", "Harass")).SetValue(new KeyBind(67, KeyBindType.Press));
+            Menu.AddItem(new MenuItem("activated", "Active")).SetValue(true);
+            Menu.AddItem(new MenuItem("useharass", "Harass")).SetValue(true);
             Menu.AddItem(new MenuItem("checkCollision", "Check collision")).SetValue(true);
             Menu.AddItem(new MenuItem("prediction", "Prediction")).SetValue(new StringList(
                 new[] {"SPrediction", "Kurisu", "Kurisu Old", "Drito"}
             ));
             Menu.AddItem(new MenuItem("hitchance", "Hit Chance").SetValue<StringList>(new StringList(HitchanceDisplay, 3)));
             Menu.AddItem(new MenuItem("manapct", "Minimum Mana %")).SetValue(new Slider(55));
+
+            Menu.AddToMainMenu();
 
             // Set the skillshot.
             Javelin.SetSkillshot(Game.Version.Contains("5.15") ? 0.25f : 0.125f, 40f, 1300f, true, SkillshotType.SkillshotLine);
@@ -47,10 +48,12 @@ namespace NeedASpear_ {
 
         public void Game_OnGameUpdate(EventArgs args) {
             // Check if enabled
-            if (!Menu.Item("active").GetValue<bool>()) return;
+            if (!Menu.Item("activated").GetValue<bool>()) return;
 
             // Target selector, select our target based on collision if set by the user.
-            var target = Menu.Item("checkCollision").GetValue<Bool>() ? TargetSelector.GetTargetNoCollision(Javelin) : TargetSelector.GetTarget(Javelin.Range, TargetSelector.DamageType.Magical);
+            var cc = Menu.Item("checkCollision").GetValue<bool>();
+            var target = cc ? TargetSelector.GetTargetNoCollision(Javelin) : TargetSelector.GetTarget(Javelin.Range, TargetSelector.DamageType.Magical);
+            //var target = TargetSelector.GetTargetNoCollision(Javelin);
             if (!target.IsValidTarget(Javelin.Range) || !Javelin.IsReady()) return;
 
             // Find out what kind of prediction we're using

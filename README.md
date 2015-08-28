@@ -9,3 +9,6 @@ Through L#
 
 ### requirements
 NeedASpear requires SPrediction library.
+
+### video
+[netstat](https://www.youtube.com/watch?v=BvYqV6bORB0)
